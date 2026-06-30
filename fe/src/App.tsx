@@ -2,6 +2,10 @@
 import { RouterProvider } from '@tanstack/react-router'
 import { router } from './router'
 import { useAuth } from './hooks/useAuth'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+
+const queryClient = new QueryClient();
 
 export function App() {
   const { isAuthenticated, user, isLoading } = useAuth()
@@ -11,9 +15,12 @@ export function App() {
   }
 
   return (
-    <RouterProvider
-      router={router}
-      context={{ auth: { isAuthenticated, user } }}
-    />
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider
+        router={router}
+        context={{ auth: { isAuthenticated, user } }}
+      />
+    </QueryClientProvider>
+
   )
 }

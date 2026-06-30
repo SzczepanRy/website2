@@ -1,19 +1,25 @@
 package middleware
 
-import "net/http"
+import (
+	"log"
+	"net/http"
+)
 
 func CORSMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
-		w.Header().Set("Access-Control-Allow-Origin", "https://yourfrontend.com")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		// 1. Zawsze dodaj nagłówki
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 
-		if r.Method == "OPTIONS" {
+		// 2. KLUCZOWE: Jeśli OPTIONS, odpowiedz i ZAKOŃCZ
+		if r.Method == http.MethodOptions {
+			log.Println("DEBUG: Middleware obsłużył OPTIONS")
 			w.WriteHeader(http.StatusNoContent)
 			return
 		}
 
+		// 3. Jeśli nie OPTIONS, przekaż dalej
 		next.ServeHTTP(w, r)
 	})
 }

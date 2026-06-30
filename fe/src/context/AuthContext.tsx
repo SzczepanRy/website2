@@ -1,3 +1,4 @@
+// ten kod ni c nie  robi bo ge nie rozumiem
 import React, { createContext,  useState, useEffect } from 'react'
 
 interface User {

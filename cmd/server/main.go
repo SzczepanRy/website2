@@ -16,13 +16,14 @@ func main() {
 	if err != nil {
 		log.Fatal("could not load env\n")
 	}
-
-	mux := &router.Router{}
+	mux := router.NewRouter()
 	CORSmux := middleware.CORSMiddleware(mux)
 
 	log.Printf("server port 8080")
-	http.ListenAndServe(":8080", CORSmux)
+
+	// Złap błąd, jeśli port jest zajęty
+	err = http.ListenAndServe(":8080", CORSmux)
 	if err != nil {
-		log.Fatal("Serwer przestał działać: ", err)
+		log.Fatal("Serwer nie mógł wystartować: ", err)
 	}
 }
