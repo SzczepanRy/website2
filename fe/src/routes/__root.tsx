@@ -6,14 +6,14 @@ interface MyRouterContext {
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: () => (
-    <div>
-      <nav>
+    <div className="root-layout">
+      <nav className="root-nav">
         <Link to="/">Główna</Link>
-        <br/>
-        <Link to="/dashboard">Panel (Zabezpieczony)O</Link>
-
+        <Link to="/dashboard">Panel (Zabezpieczony)</Link>
       </nav>
-      <Outlet />
+      <div className="root-outlet">
+        <Outlet />
+      </div>
     </div>
   ),
 })

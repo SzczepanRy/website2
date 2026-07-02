@@ -1,39 +1,39 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 
-// 1. Rejestracja ścieżki w routerze (dla strony głównej przekazujemy '/')
 export const Route = createFileRoute('/')({
   component: HomeComponent,
 })
 
-// 2. Komponent strony głównej
 function HomeComponent() {
   return (
-    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
-      <h1>Witaj na stronie głównej! 🚀</h1>
-      <p>To jest domyślny szablon wygenerowany dla ścieżki "/"</p>
+    <div className="home">
+      <div className="home-header">
+        <h1 className="home-title">Witaj na stronie głównej!</h1>
+        <p className="home-sub">To jest domyślny szablon wygenerowany dla ścieżki "/"</p>
+      </div>
 
-      <hr style={{ margin: '20px 0', borderColor: '#eee' }} />
+      <hr className="home-divider" />
 
-      <div style={{ display: 'flex', gap: '15px' }}>
+      <div className="home-nav">
         <Link
           to="/dashboard"
-          style={{ color: '#0070f3', textDecoration: 'none', fontWeight: 'bold' }}
+          className="home-nav-link primary"
         >
-          Przejdź do Panelu (Wymaga logowania) →
+          Przejdź do Panelu →
         </Link>
 
         <Link
           to="/login"
-          style={{ color: '#666', textDecoration: 'none' }}
+          className="home-nav-link"
         >
-          zaloguj się
+          Zaloguj się
         </Link>
 
         <Link
           to="/register"
-          style={{ color: '#666', textDecoration: 'none' }}
+          className="home-nav-link"
         >
-          zarejestruj się
+          Zarejestruj się
         </Link>
       </div>
     </div>

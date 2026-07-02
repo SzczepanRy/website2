@@ -1,0 +1,72 @@
+@use 'vars' as *;
+
+.home {
+  flex: 1;
+  padding: 80px 48px 64px;
+
+  @media (max-width: 640px) { padding: 48px 24px; }
+}
+
+.home-title {
+  font-size: clamp(3.5rem, 9vw, 8rem);
+  margin-bottom: 20px;
+  color: $text-hi;
+}
+
+.home-sub {
+  font-size: 0.85rem;
+  color: $text;
+  max-width: 360px;
+  margin-bottom: 56px;
+  line-height: 1.7;
+}
+
+.home-divider {
+  border: none;
+  border-top: 1px solid $border;
+  margin-bottom: 40px;
+}
+
+.home-nav {
+  display: flex;
+  gap: 0;
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+  }
+}
+
+.home-nav-link {
+  @extend %label;
+  display: inline-flex;
+  align-items: center;
+  padding: 12px 24px;
+  border: 1px solid $border;
+  color: $text;
+  transition: color 0.1s, border-color 0.1s, background 0.1s;
+
+  & + & { border-left: none; }
+
+  &:hover {
+    color: $text-hi;
+    border-color: $border-hi;
+    text-decoration: none;
+  }
+
+  &.primary {
+    border-color: $border-hi;
+    color: $text-hi;
+
+    &:hover {
+      background: $text-hi;
+      color: $bg;
+    }
+  }
+
+  @media (max-width: 640px) {
+    & + & {
+      border-left: 1px solid $border;
+      border-top: none;
+    }
+  }
+}

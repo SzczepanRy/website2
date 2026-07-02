@@ -1,0 +1,107 @@
+@use 'vars' as *;
+
+.auth-page {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+}
+
+.auth-box {
+  width: 100%;
+  max-width: 380px;
+  border: 1px solid $border;
+}
+
+.auth-header {
+  padding: 28px 28px 24px;
+  border-bottom: 1px solid $border;
+}
+
+.auth-label {
+  @extend %label;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.auth-title {
+  font-size: 2.2rem;
+  color: $text-hi;
+}
+
+.auth-body {
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &-label {
+    @extend %label;
+  }
+
+  input {
+    @extend %reset-input;
+    background: $bg-2;
+    border: 1px solid $border;
+    color: $text-hi;
+    padding: 10px 12px;
+    font-size: 14px;
+    transition: border-color 0.1s;
+
+    &:focus { border-color: $border-hi; outline: none; }
+  }
+}
+
+.auth-submit {
+  all: unset;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  padding: 12px;
+  margin-top: 6px;
+  border: 1px solid $border-hi;
+  color: $text-hi;
+  font-family: $sans;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+
+  &:hover {
+    background: $text-hi;
+    color: $bg;
+  }
+}
+
+.auth-footer {
+  padding: 16px 28px;
+  border-top: 1px solid $border;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  &-label { @extend %label; }
+
+  a {
+    @extend %label;
+    color: $text-hi;
+    border-bottom: 1px solid $border;
+    padding-bottom: 1px;
+    transition: border-color 0.1s;
+
+    &:hover {
+      border-color: $border-hi;
+      text-decoration: none;
+    }
+  }
+}

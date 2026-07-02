@@ -26,21 +26,30 @@ function LoginComponent() {
   }
 
   return (
-    <>
-      <div>
-        <input type="text" ref={loginRef} />
-        <input type="password" ref={passwordRef} />
-        <button onClick={handleLogin}>Zaloguj się</button>
+    <div className="auth-page">
+      <div className="auth-box">
+        <div className="auth-header">
+          <span className="auth-label">Konto</span>
+          <h1 className="auth-title">Logowanie</h1>
+        </div>
+
+        <div className="auth-body">
+          <div className="auth-field">
+            <span className="auth-field-label">Login</span>
+            <input type="text" ref={loginRef} />
+          </div>
+          <div className="auth-field">
+            <span className="auth-field-label">Hasło</span>
+            <input type="password" ref={passwordRef} />
+          </div>
+          <button className="auth-submit" onClick={handleLogin}>Zaloguj się</button>
+        </div>
+
+        <div className="auth-footer">
+          <span className="auth-footer-label">Nie masz konta?</span>
+          <Link to="/register">zarejestruj się</Link>
+        </div>
       </div>
-        <Link
-          to="/register"
-          style={{ color: '#666', textDecoration: 'none' }}
-        >
-          zarejestruj się
-        </Link>
-
-
-    </>
-
+    </div>
   )
 }

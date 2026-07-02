@@ -11,7 +11,10 @@ export const Route = createFileRoute('/dashboard/')({
   component: DashboardComponent,
 })
 function DashboardComponent() {
-  return <h1>Witaj w bezpiecznym panelu! 🔐</h1>
+  return (
+    <div className="dashboard-page">
+      <h1 className="dashboard-title">Witaj w bezpiecznym panelu! 🔐</h1>
+      <span className="dashboard-badge">Dostęp autoryzowany</span>
+    </div>
+  )
 }
-
-
