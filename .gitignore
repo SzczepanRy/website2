@@ -1,2 +1,43 @@
-node_modules/
+# =========================
+# Zmienne środowiskowe
+# =========================
 .env
+.env.*
+!.env.example
+
+# =========================
+# Frontend (Node / Vite)
+# =========================
+node_modules/
+dist/
+dist-ssr/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# =========================
+# Backend (Go)
+# =========================
+# Skompilowane pliki binarne (jeśli kompilujesz aplikację lokalnie)
+/main
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# =========================
+# Logi i pliki systemowe
+# =========================
+*.log
+.DS_Store
+Thumbs.db
+
+# =========================
+# Edytory kodu (Opcjonalnie, ale warto)
+# =========================
+.vscode/
+.idea/
