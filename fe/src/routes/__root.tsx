@@ -9,7 +9,9 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     <div>
       <nav>
         <Link to="/">Główna</Link>
-        <Link to="/dashboard">Panel (Zabezpieczony)</Link>
+        <br/>
+        <Link to="/dashboard">Panel (Zabezpieczony)O</Link>
+
       </nav>
       <Outlet />
     </div>

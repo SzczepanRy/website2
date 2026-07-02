@@ -26,7 +26,14 @@ function HomeComponent() {
           to="/login"
           style={{ color: '#666', textDecoration: 'none' }}
         >
-          Zaloguj się
+          zaloguj się
+        </Link>
+
+        <Link
+          to="/register"
+          style={{ color: '#666', textDecoration: 'none' }}
+        >
+          zarejestruj się
         </Link>
       </div>
     </div>

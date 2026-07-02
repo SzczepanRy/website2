@@ -33,6 +33,7 @@ func Adduser(user *internal.RedgisterReq) error {
 
 	return nil
 }
+
 func Getuser(user *internal.LoginReq) error {
 
 	if user.Login == "" || user.Password == "" {

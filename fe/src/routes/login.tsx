@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 //import { useAuth } from '../hooks/useAuth'
 import { useRef } from 'react'
 import { useMutation } from '@tanstack/react-query'
@@ -22,21 +22,23 @@ function LoginComponent() {
   const handleLogin = () => {
     const loginstr = loginRef.current?.value ?? "" //nowostka ?? XD
     const passwordstr = passwordRef.current?.value ?? ""
-    console.log(loginstr , passwordstr)
     loginMt.mutate({ login: loginstr, password: passwordstr })
-    //login({ name: 'Jan Kowalski', email: 'jan@wp.pl' })
   }
 
   return (
     <>
       <div>
-
         <input type="text" ref={loginRef} />
-        <input type="text" ref={passwordRef} />
-
+        <input type="password" ref={passwordRef} />
         <button onClick={handleLogin}>Zaloguj się</button>
-
       </div>
+        <Link
+          to="/register"
+          style={{ color: '#666', textDecoration: 'none' }}
+        >
+          zarejestruj się
+        </Link>
+
 
     </>
 
