@@ -1,47 +1,62 @@
-// ten kod ni c nie  robi bo ge nie rozumiem
 import React, { createContext,  useState, useEffect } from 'react'
-
-interface User {
-  name: string
-  email: string
-}
+import net from '../net/net'
+import { useMutation } from '@tanstack/react-query'
 
 interface AuthContextType {
   isAuthenticated: boolean
-  user: User | null
+  access: string| null
   isLoading: boolean
-  login: (userData: User) => void
+  login: (access: string) => void
   logout: () => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
+  const [access, setAccess] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  useEffect(() => {
-    const savedUser = localStorage.getItem('user')
-    if (savedUser) {
-      setUser(JSON.parse(savedUser))
+
+  const refreshMt = useMutation({
+    mutationFn: () => net.fetchRefresh(),
+    onSuccess: (data) => {
+      if (data && data.access) {
+        login(data.access)
+      }
+    },
+    onError: () => {
+      logout()
+    },
+    onSettled: () => {
+      setIsLoading(false)
     }
-    setIsLoading(false) // Koniec ładowania sesji
+  });
+
+  useEffect(() => {
+    const accessLocal= localStorage.getItem('access_token')
+    if (accessLocal) {
+      setAccess(accessLocal)
+      setIsLoading(false)
+    }else {
+      refreshMt.mutate()
+    }
+
   }, [])
 
-  const login = (userData: User) => {
-    setUser(userData)
-    localStorage.setItem('user', JSON.stringify(userData))
+  const login = (access: string) => {
+    setAccess(access)
+    localStorage.setItem('access_token', access)
   }
 
   const logout = () => {
-    setUser(null)
-    localStorage.removeItem('user')
+    setAccess(null)
+    localStorage.removeItem('access_token')
   }
 
-  const isAuthenticated = !!user // true jeśli user istnieje, false jeśli null
+  const isAuthenticated = !!access// true jeśli istnieje, false jeśli null
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, access, isLoading, login, logout }}>
       {children}
     </AuthContext.Provider>
   )

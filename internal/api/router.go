@@ -22,10 +22,13 @@ func NewRouter() *Router {
 }
 func (mux *Router) setupRoutes() {
 	mux.apiRoutes["/api/register"] = handlers.HandleRedgister
+	mux.apiRoutes["/api/refresh"] = handlers.Refresh
 	mux.apiRoutes["/api/login"] = handlers.HandleLogin
 }
 
 func (mux *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+
+	// mam zorbinmy auth mniddleware ale nei wime czy on jest wgl potrzebny
 
 	if match, _ := regexp.MatchString("/api/.*", r.URL.Path); match {
 		//api niem wim czy trzeba post jakoś inferować
