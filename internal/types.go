@@ -10,7 +10,7 @@ type ErrorRes struct {
 type LoginRes struct {
 	Status  int    `json:"status"`
 	Message string `json:"message"`
-	Access  string `json:"accesss"`
+	Access  string `json:"access"`
 }
 
 type LoginReq struct {
@@ -24,14 +24,12 @@ type RedgisterReq struct {
 	Password string `json:"password"`
 }
 
-
 type RefreshReq struct {
 }
+
 type RefreshRes struct {
-	Access  string `json:"accesss"`
+	Access string `json:"access"`
 }
-
-
 
 type RedgisterRes struct {
 	Status  int    `json:"status"`
@@ -39,6 +37,11 @@ type RedgisterRes struct {
 }
 
 // /////////////auth
+
+type GuardRes struct {
+	Auth string `json:"Authorization"`
+}
+
 type CustomClaims struct {
 	Login string `json:"login"`
 	jwt.RegisteredClaims

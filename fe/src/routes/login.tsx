@@ -1,9 +1,10 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link ,useNavigate} from '@tanstack/react-router'
 //import { useAuth } from '../hooks/useAuth'
 import { useRef } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import type { LoginFormI } from '../types/types'
 import net from '../net/net'
+import { useAuth } from '../hooks/useAuth'
 
 
 export const Route = createFileRoute('/login')({
@@ -11,10 +12,22 @@ export const Route = createFileRoute('/login')({
 })
 
 function LoginComponent() {
-  //const { login } = useAuth()
 
-  const loginMt = useMutation({ mutationFn: (data: LoginFormI) => net.fetchLogin(data) });
+  const { login } = useAuth()
+  const navigate = useNavigate()
 
+  const loginMt = useMutation({
+    mutationFn: (data: LoginFormI) => net.fetchLogin(data),
+    onSuccess: (resdata) => {
+      if (resdata && resdata.access) {
+        login(resdata.access)
+        navigate({ to: '/' })
+      }
+    },
+    onError: (error) => {
+      console.error("Błąd logowania:", error)
+    }
+  });
 
   const loginRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);

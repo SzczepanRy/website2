@@ -5,6 +5,12 @@
 .env.*
 !.env.example
 
+fe/node_modules/
+
+
+# Ignoruj pliki lokalnych zmiennych środowiskowych
+fe/.env*
+
 # =========================
 # Frontend (Node / Vite)
 # =========================
@@ -20,7 +26,7 @@ yarn-error.log*
 # Backend (Go)
 # =========================
 # Skompilowane pliki binarne (jeśli kompilujesz aplikację lokalnie)
-/main
+/bin
 *.exe
 *.exe~
 *.dll

@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/')({
   component: HomeComponent,
@@ -15,6 +15,10 @@ function HomeComponent() {
       <hr className="home-divider" />
 
       <div className="home-nav">
+
+
+
+        {/*
         <Link
           to="/dashboard"
           className="home-nav-link primary"
@@ -35,6 +39,7 @@ function HomeComponent() {
         >
           Zarejestruj się
         </Link>
+        */}
       </div>
     </div>
   )

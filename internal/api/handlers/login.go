@@ -128,7 +128,6 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 	services.SetRefreshCookie(w, reftoken)
 
 	w.Header().Set("Content-Type", "application/json")
-
 	w.WriteHeader(http.StatusOK)
 
 	res.Status = 200

@@ -4,6 +4,7 @@ import type { LoginFormI, RegisterFormI } from "../types/types";
 const localUrl = ""
 
 const net = {
+
   async fetchLogin(data: LoginFormI): Promise<any> {
     const res = await fetch(localUrl + "/api/login", {
       method: "post",
@@ -13,7 +14,17 @@ const net = {
       },
       body: JSON.stringify(data),
     });
-    return res.json();
+
+    if (!res.ok) {
+      throw new Error("Logowanie nie powiodło się");
+    }
+
+    const resdata = await res.json();
+
+    if (resdata && resdata.access) {
+      localStorage.setItem("access_token", resdata.access);
+    }
+    return resdata;
   },
 
 
@@ -29,6 +40,29 @@ const net = {
     });
     return res.json();
   },
+
+  async fetchRefresh(): Promise<any> {
+    const res = await fetch(localUrl + "/api/refresh", {
+      method: "post",
+      headers: {
+        "content-type": "application/json"
+      },
+      //credentials: 'include',
+    });
+
+    if (!res.ok) {
+      throw new Error("Logowanie nie powiodło się");
+    }
+
+    const resdata = await res.json();
+
+    if (resdata && resdata.access) {
+      localStorage.setItem("access_token", resdata.access);
+    }
+
+    return resdata;
+  },
+
 
 }
 
