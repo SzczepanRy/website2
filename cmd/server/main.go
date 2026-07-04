@@ -4,6 +4,8 @@ import (
 	"log"
 	"net/http"
 	router "server/internal/api"
+	"server/internal/api/database"
+	"server/internal/api/handlers"
 	"server/internal/api/middleware"
 
 	"github.com/joho/godotenv"
@@ -16,7 +18,13 @@ func main() {
 	if err != nil {
 		log.Fatal("could not load env\n")
 	}
-	mux := router.NewRouter()
+
+	db := database.NewDB()
+	defer db.Close()
+
+	handlerCtx := handlers.NewContextHandler(db)
+
+	mux := router.NewRouter(handlerCtx)
 	CORSmux := middleware.CORSMiddleware(mux)
 
 	log.Printf("server port 8080")

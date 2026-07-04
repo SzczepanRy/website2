@@ -1,6 +1,11 @@
 package internal
 
-import "github.com/golang-jwt/jwt/v5"
+import (
+	"database/sql"
+	"time"
+
+	"github.com/golang-jwt/jwt/v5"
+)
 
 type ErrorRes struct {
 	Status  int    `json:"status"`
@@ -45,4 +50,16 @@ type GuardRes struct {
 type CustomClaims struct {
 	Login string `json:"login"`
 	jwt.RegisteredClaims
+}
+
+/////////////////DB
+
+type User struct {
+	Login          string
+	Email          string
+	HashedPassword string
+	RefreshToken   sql.NullString
+	TokenExpiresAt sql.NullTime
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
 }

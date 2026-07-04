@@ -4,15 +4,21 @@ import (
 	"encoding/json"
 	"net/http"
 	"server/internal"
+	"server/internal/api/database"
 	"server/internal/services"
 	"time"
 )
 
-func HandleRedgister(w http.ResponseWriter, r *http.Request) {
+type HandlerCtx struct {
+	db *database.Database
+}
 
-	//##########################
-	// this will be changed
-	//##########################
+func NewContextHandler(db *database.Database) *HandlerCtx {
+	return &HandlerCtx{db: db}
+
+}
+
+func (h *HandlerCtx) HandleRedgister(w http.ResponseWriter, r *http.Request) {
 
 	var data internal.RedgisterReq
 
@@ -21,8 +27,14 @@ func HandleRedgister(w http.ResponseWriter, r *http.Request) {
 		Error(w, r, "could not parse json", http.StatusInternalServerError)
 	}
 
-	err = services.Adduser(&data)
+	_, err = h.db.Getuser(r.Context(), data.Login)
+	if err == nil {
+		Error(w, r, "login taken", http.StatusInternalServerError)
+	}
 
+	passwordhash := services.NewPasswoedHash(data.Password)
+
+	err = h.db.Adduser(r.Context(), data.Login, data.Email, passwordhash)
 	if err != nil {
 		Error(w, r, "Error wiriing to db"+err.Error(), http.StatusInternalServerError)
 	}
@@ -39,7 +51,9 @@ func HandleRedgister(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handleRefresh(w http.ResponseWriter, r *http.Request) {
+func (h *HandlerCtx) HandleRefresh(w http.ResponseWriter, r *http.Request) {
+	//to sie tera dzinie zachowuje bo nie da je wylogować na fe XD
+	// bo ciastko httponly
 
 	cookie, err := r.Cookie("refresh_token")
 	if err != nil {
@@ -54,10 +68,6 @@ func handleRefresh(w http.ResponseWriter, r *http.Request) {
 	}
 
 	rawRefreshToken := cookie.Value
-
-	/*
-		add tings to update when doing db
-	*/
 
 	data, err := services.VerifyToken(rawRefreshToken)
 
@@ -79,6 +89,13 @@ func handleRefresh(w http.ResponseWriter, r *http.Request) {
 		Error(w, r, "Error generating refresh token: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	err = h.db.UpdateRefresh(r.Context(), reftoken, data.Login)
+	if err != nil {
+		Error(w, r, "DB Error : "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	services.SetRefreshCookie(w, reftoken)
 
 	w.Header().Set("Content-Type", "application/json")
@@ -93,11 +110,7 @@ func handleRefresh(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func HandleLogin(w http.ResponseWriter, r *http.Request) {
-
-	//##########################
-	// this will be changed DB
-	//##########################
+func (h *HandlerCtx) HandleLogin(w http.ResponseWriter, r *http.Request) {
 
 	var data internal.LoginReq
 
@@ -106,12 +119,18 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 		Error(w, r, "could not parse json: ", http.StatusInternalServerError)
 	}
 
-	err = services.Getuser(&data)
-
+	user, err := h.db.Getuser(r.Context(), data.Login)
 	if err != nil {
-		Error(w, r, "Error wiriing to db: "+err.Error(), http.StatusInternalServerError)
+		Error(w, r, "Error reading db: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	err = services.VerifyPasswordHash(user.HashedPassword, data.Password)
+	if err != nil {
+		Error(w, r, "innvalid refresh_token: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 
 	var res internal.LoginRes
 	res.Access, err = services.GenerateToken(data.Login, time.Hour)
@@ -125,6 +144,13 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 		Error(w, r, "Error generating refresh token: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	err = h.db.UpdateRefresh(r.Context() , reftoken , data.Login)
+	if err != nil {
+		Error(w, r, "Error saving refresh token: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	services.SetRefreshCookie(w, reftoken)
 
 	w.Header().Set("Content-Type", "application/json")

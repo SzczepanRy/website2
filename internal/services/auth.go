@@ -58,28 +58,12 @@ func SetRefreshCookie(w http.ResponseWriter, refreshToken string) {
 		Value:   refreshToken,
 		Expires: time.Now().Add(7 * 24 * time.Hour),
 
-		Secure:   false,
+		Secure:   true,
 		SameSite: http.SameSiteLaxMode,
 		Path:     "/",
 
-		/*
-
-			// 1. Uniemożliwia dostęp do ciasteczka przez JavaScript (ochrona przed XSS)
-			HttpOnly: true,
-
-			// 2. Ciasteczko zostanie wysłane TYLKO przez szyfrowane połączenie HTTPS
-			// (Na localhost możesz zostawić true, nowoczesne przeglądarki na to pozwalają)
-			Secure:   true,
-
-			// 3. Ogranicza wysyłanie ciasteczka w zapytaniach międzywitrynowych (ochrona przed CSRF)
-			SameSite: http.SameSiteStrictMode,
-
-			// 4. Bardzo ważne! Ciasteczko będzie wysyłane TYLKO do endpointu odświeżania.
-			// Żaden inny kontroler (np. /api/users) go nie otrzyma.
-			Path:     "/api/refresh",
-		*/
+		HttpOnly: true,
 	}
 
-	// Zapisanie ciasteczka w nagłówku odpowiedzi (Set-Cookie)
 	http.SetCookie(w, cookie)
 }

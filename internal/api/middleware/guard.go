@@ -1,36 +1,33 @@
 package middleware
 
 import (
-	"encoding/json"
 	"net/http"
-	"server/internal"
 	"server/internal/api/handlers"
 	"server/internal/services"
 	"strings"
 )
 
-func AuthGuard(next http.Handler) http.Handler {
-
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
-		var data internal.GuardRes
-
-		err := json.NewDecoder(r.Body).Decode(&data)
-		if err != nil {
-			handlers.Error(w, r, "could not parse json Auth middleware", http.StatusInternalServerError)
-			return
-		}
-		access := strings.Split(data.Auth, " ")[2]
-
-		_, err = services.VerifyToken(access) //nie potszeba tu claims
-
-		if err != nil {
-			handlers.Error(w, r, "invalid access token", http.StatusForbidden)
+func AuthGuard(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		authHeader := r.Header.Get("Authorization")
+		if authHeader == "" {
+			handlers.Error(w, r, "Brak nagłówka Authorization", http.StatusUnauthorized)
 			return
 		}
 
-		next.ServeHTTP(w, r)
+		parts := strings.Split(authHeader, " ")
+		if len(parts) != 2 || parts[0] != "Bearer" {
+			handlers.Error(w, r, "Niepoprawny format nagłówka Authorization", http.StatusBadRequest)
+			return
+		}
+		accessToken := parts[1]
 
-	})
+		_, err := services.VerifyToken(accessToken)
+		if err != nil {
+			handlers.Error(w, r, "Invalid access token", http.StatusForbidden)
+			return
+		}
 
+		next(w, r)
+	}
 }

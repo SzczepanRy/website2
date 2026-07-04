@@ -12,10 +12,8 @@ function UploadComponent() {
   return (
     <div className="">
       <h1 className="">podstrona uplad</h1>
-      <form>
-        <input type='file' placeholder='select file'/>
-        <button>send</button>
-      </form>
+      <input type='file' placeholder='select file'/>
+      <button>send</button>
     </div>
   )
 }

@@ -5,25 +5,30 @@ import (
 	"net/http"
 	"regexp"
 	"server/internal/api/handlers"
+	"server/internal/api/middleware"
 )
 
 type Router struct {
 	middleware []func(http.Handler) http.Handler
 	apiRoutes  map[string]http.HandlerFunc
+	hCtx       *handlers.HandlerCtx
 }
 
-func NewRouter() *Router {
+func NewRouter(hCtx *handlers.HandlerCtx) *Router {
 	r := &Router{
 		apiRoutes: make(map[string]http.HandlerFunc),
+		hCtx:      hCtx,
 	}
 	r.setupRoutes()
 	return r
-
 }
+
 func (mux *Router) setupRoutes() {
-	mux.apiRoutes["/api/register"] = handlers.HandleRedgister
-	mux.apiRoutes["/api/refresh"] = handlers.Refresh
-	mux.apiRoutes["/api/login"] = handlers.HandleLogin
+	mux.apiRoutes["/api/register"] = mux.hCtx.HandleRedgister
+	mux.apiRoutes["/api/refresh"] = mux.hCtx.HandleRefresh
+	mux.apiRoutes["/api/login"] = mux.hCtx.HandleLogin
+
+	mux.apiRoutes["/api/upload"] = middleware.AuthGuard(handlers.HandleUpload)
 }
 
 func (mux *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
