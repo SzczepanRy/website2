@@ -29,6 +29,7 @@ func (mux *Router) setupRoutes() {
 	mux.apiRoutes["/api/login"] = mux.hCtx.HandleLogin
 
 	mux.apiRoutes["/api/upload"] = middleware.AuthGuard(handlers.HandleUpload)
+	mux.apiRoutes["/api/upload-chunk"] = middleware.AuthGuard(handlers.HandleUploadChunk)
 }
 
 func (mux *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {

@@ -10,5 +10,8 @@ export interface RegisterFormI {
   password: string;
 }
 
-
-
+export interface UploadResponse {
+    message: string;
+    fileUrl?: string;
+    fileId?: number;
+}
