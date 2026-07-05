@@ -84,20 +84,6 @@ func (h *HandlerCtx) HandleRefresh(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	reftoken, err := services.GenerateToken(data.Login, 24*time.Hour)
-	if err != nil {
-		Error(w, r, "Error generating refresh token: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	err = h.db.UpdateRefresh(r.Context(), reftoken, data.Login)
-	if err != nil {
-		Error(w, r, "DB Error : "+err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	services.SetRefreshCookie(w, reftoken)
-
 	w.Header().Set("Content-Type", "application/json")
 
 	w.WriteHeader(http.StatusOK)
@@ -117,6 +103,7 @@ func (h *HandlerCtx) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
 		Error(w, r, "could not parse json: ", http.StatusInternalServerError)
+		return
 	}
 
 	user, err := h.db.Getuser(r.Context(), data.Login)
@@ -131,7 +118,6 @@ func (h *HandlerCtx) HandleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
 	var res internal.LoginRes
 	res.Access, err = services.GenerateToken(data.Login, time.Hour)
 	if err != nil {
@@ -145,7 +131,7 @@ func (h *HandlerCtx) HandleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.db.UpdateRefresh(r.Context() , reftoken , data.Login)
+	err = h.db.UpdateRefresh(r.Context(), reftoken, data.Login)
 	if err != nil {
 		Error(w, r, "Error saving refresh token: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -153,16 +139,16 @@ func (h *HandlerCtx) HandleLogin(w http.ResponseWriter, r *http.Request) {
 
 	services.SetRefreshCookie(w, reftoken)
 
+	res.Status = 200
+	res.Message = "login succesfull"
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
-	res.Status = 200
-	res.Message = "login succesfull"
+
 
 	err = json.NewEncoder(w).Encode(res)
 	if err != nil {
 		Error(w, r, " Błąd kodowania JSON :"+err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 }

@@ -41,6 +41,31 @@ type RedgisterRes struct {
 	Message string `json:"message"`
 }
 
+
+type FilesReq struct {
+	Dir string `json:"dir"`
+}
+
+type FilesRes struct {
+	Dirs []string `json:"dirs"`
+}
+
+
+type DeleteReq struct {
+	Path string `json:"path"`
+}
+
+type FolderReq struct {
+	Path string `json:"path"`
+}
+
+
+
+
+
+
+
+
 // /////////////auth
 
 type GuardRes struct {

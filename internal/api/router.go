@@ -30,11 +30,14 @@ func (mux *Router) setupRoutes() {
 
 	mux.apiRoutes["/api/upload"] = middleware.AuthGuard(handlers.HandleUpload)
 	mux.apiRoutes["/api/upload-chunk"] = middleware.AuthGuard(handlers.HandleUploadChunk)
+	mux.apiRoutes["/api/files"] = middleware.AuthGuard(handlers.HandleGetFiles)
+	mux.apiRoutes["/api/delete"] = middleware.AuthGuard(handlers.HandleDeleteFiles)
+	mux.apiRoutes["/api/folder"] = middleware.AuthGuard(handlers.HandleCreateFolder)
+
 }
 
 func (mux *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
-	// mam zorbinmy auth mniddleware ale nei wime czy on jest wgl potrzebny
 
 	if match, _ := regexp.MatchString("/api/.*", r.URL.Path); match {
 		//api niem wim czy trzeba post jakoś inferować

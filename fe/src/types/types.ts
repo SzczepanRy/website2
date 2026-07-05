@@ -1,4 +1,3 @@
-
 export interface LoginFormI {
   login: string;
   password: string;
@@ -11,7 +10,11 @@ export interface RegisterFormI {
 }
 
 export interface UploadResponse {
-    message: string;
-    fileUrl?: string;
-    fileId?: number;
+  message: string;
+  fileUrl?: string;
+  fileId?: number;
+}
+
+export interface DirsI {
+  dirs: string[];
 }

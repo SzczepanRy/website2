@@ -1,17 +1,106 @@
 package handlers
 
 import (
+	"encoding/json"
 	"io"
 	"log"
 	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
+	"server/internal"
 )
+
+
+func HandleCreateFolder(w http.ResponseWriter, r *http.Request) {
+	var data internal.FolderReq
+
+	err := json.NewDecoder(r.Body).Decode(&data)
+	if err != nil {
+		Error(w, r, "could not parse json: ", http.StatusInternalServerError)
+		return
+	}
+
+	dirPath := "./uploads" + data.Path
+	err = os.MkdirAll(dirPath, 0755)
+	if err != nil {
+		Error(w, r, "could not create: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+}
+
+
+
+func HandleDeleteFiles(w http.ResponseWriter, r *http.Request) {
+	var data internal.DeleteReq
+
+	err := json.NewDecoder(r.Body).Decode(&data)
+	if err != nil {
+		Error(w, r, "could not parse json: ", http.StatusInternalServerError)
+		return
+	}
+
+	dirPath := "./uploads" + data.Path
+
+	err = os.RemoveAll(dirPath)
+	if err != nil {
+		Error(w, r, "could not delete: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+}
+
+
+func HandleGetFiles(w http.ResponseWriter, r *http.Request) {
+
+	var data internal.FilesReq
+
+	err := json.NewDecoder(r.Body).Decode(&data)
+	if err != nil {
+		Error(w, r, "could not parse json: ", http.StatusInternalServerError)
+		return
+	}
+	dirPath := "./uploads" + data.Dir
+
+	var res internal.FilesRes
+
+	entries, err := os.ReadDir(dirPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, entry := range entries {
+		if entry.IsDir() {
+			res.Dirs = append(res.Dirs, "FOLDER:"+entry.Name())
+		} else {
+			res.Dirs = append(res.Dirs, "FILE:"+entry.Name())
+		}
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	err = json.NewEncoder(w).Encode(res)
+	if err != nil {
+		Error(w, r, " Błąd kodowania JSON :"+err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
 
 func HandleUploadChunk(w http.ResponseWriter, r *http.Request) {
 	encodedFileName := r.Header.Get("X-File-Name")
 	chunkIndex := r.Header.Get("X-Chunk-Index")
+	encodedPath := r.Header.Get("X-Target-Path")
+
+	path, err := url.QueryUnescape(encodedPath)
+	if err != nil {
+		http.Error(w, "Błędna ścieżka", http.StatusBadRequest)
+		return
+	}
 
 	// Dekodujemy nazwę pliku (bo na frontendzie zrobiliśmy encodeURIComponent)
 	fileName, _ := url.QueryUnescape(encodedFileName)
@@ -20,7 +109,7 @@ func HandleUploadChunk(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	uploadDir := "./uploads"
+	uploadDir := "./uploads" + path
 	if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {
 		http.Error(w, "Błąd tworzenia folderu", http.StatusInternalServerError)
 		return
@@ -77,23 +166,30 @@ func HandleUploadChunk(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleUpload(w http.ResponseWriter, r *http.Request) {
-	// 2. Inicjalizacja czytnika Multipart (strumieniowego)
+
+	encodedPath := r.Header.Get("X-Target-Path")
+
+	path, err := url.QueryUnescape(encodedPath)
+	if err != nil {
+		http.Error(w, "Błędna ścieżka", http.StatusBadRequest)
+		return
+	}
 	reader, err := r.MultipartReader()
+
 	if err != nil {
 		log.Printf("Błąd inicjalizacji MultipartReader: %v\n", err)
 		Error(w, r, "Niepoprawny format multipart/form-data", http.StatusBadRequest)
 		return
 	}
 
-	// Stworzenie folderu na pliki, jeśli jeszcze nie istnieje
-	uploadDir := "./uploads"
+	uploadDir := "./uploads" + path
+
 	if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {
 		log.Printf("Błąd tworzenia folderu uploads: %v\n", err)
 		Error(w, r, "Błąd wewnętrzny serwera", http.StatusInternalServerError)
 		return
 	}
 
-	// 3. Pętla przetwarzająca części żądania (pliki i inne pola formularza)
 	for {
 		part, err := reader.NextPart()
 		if err == io.EOF {
@@ -135,15 +231,11 @@ func HandleUpload(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			// Jeśli aplikacja tego wymaga, tutaj możesz wywołać zapytanie do bazy:
-			// h.db.Pool.Exec(r.Context(), "INSERT INTO user_files ...")
 		} else {
-			// Jeśli przesyłasz inne pola w formularzu obok pliku, musisz je zamknąć, by czytać dalej
 			part.Close()
 		}
 	}
 
-	// 5. Sukces – zwracamy ładny JSON
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 }

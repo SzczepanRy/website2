@@ -1,24 +1,21 @@
-import type { LoginFormI, RegisterFormI, UploadResponse } from "../types/types";
+import type { DirsI, LoginFormI, RegisterFormI, UploadResponse } from "../types/types";
 
 //const localUrl = "http://localhost:8080"
 const localUrl = ""
 
 const net = {
-  async uploadLargeFile(file: File): Promise<UploadResponse> {
+  async uploadLargeFile(file: File , path :string): Promise<UploadResponse> {
+
     if (!file) throw new Error("Brak pliku do wysłania.");
 
-    // Tniemy plik na paczki po 5 MB (możesz zwiększyć do 10-20MB)
     const CHUNK_SIZE = 5 * 1024 * 1024;
     const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
     const accessToken = localStorage.getItem("access_token");
 
-    // Lecimy pętlą po wszystkich kawałkach pliku
     for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
-        // Obliczamy gdzie zaczyna i kończy się dany kawałek
         const start = chunkIndex * CHUNK_SIZE;
         const end = Math.min(start + CHUNK_SIZE, file.size);
 
-        // Magia dzieje się tutaj: native method .slice() obiektu File
         const chunk = file.slice(start, end);
 
         const formData = new FormData();
@@ -29,13 +26,12 @@ const net = {
             headers.append("Authorization", `Bearer ${accessToken}`);
         }
 
-        // Musimy powiedzieć backendowi (Go), który to kawałek, żeby umiał to potem skleić
         headers.append("X-File-Name", encodeURIComponent(file.name));
         headers.append("X-Chunk-Index", chunkIndex.toString());
         headers.append("X-Total-Chunks", totalChunks.toString());
+        headers.append("X-Target-Path", encodeURIComponent(path));
 
-        // Wysyłamy konkretny kawałek
-        const response = await fetch("http://localhost:8080/api/upload-chunk", {
+        const response = await fetch("/api/upload-chunk", {
             method: "POST",
             headers: headers,
             body: formData
@@ -46,13 +42,86 @@ const net = {
             throw new Error(`Wysypało się na paczce ${chunkIndex + 1}/${totalChunks}. Błąd: ${errorMsg}`);
         }
 
-        // Tutaj mógłbyś w przyszłości raportować postęp (np. do stanu Reacta)
         console.log(`Wysłano paczkę ${chunkIndex + 1} z ${totalChunks}`);
     }
 
-    // Jeśli pętla przeszła bez błędów, cały plik jest na serwerze
     return { message: "Plik 2GB pomyślnie wysłany w kawałkach!" };
   },
+
+
+  async fetchCreateFolder(path: string): Promise<any> {
+    const res = await fetch(localUrl + "/api/folder", {
+      method: "post",
+      headers: {
+        "content-type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem('access_token')}`
+      },
+      body:JSON.stringify({path})
+    });
+
+
+    if (res.status == 403){
+      const refres =  await this.fetchRefresh()
+      if (!refres.ok) {
+        throw new Error("pobieranie plików nie powiodło się");
+      }
+    }else if (!res.ok) {
+      throw new Error("pobieranie plików nie powiodło się");
+    }
+  },
+
+
+
+
+
+  async fetchDelete(path: string): Promise<any> {
+    const res = await fetch(localUrl + "/api/delete", {
+      method: "post",
+      headers: {
+        "content-type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem('access_token')}`
+      },
+      body:JSON.stringify({path})
+    });
+
+
+    if (res.status == 403){
+      const refres =  await this.fetchRefresh()
+      if (!refres.ok) {
+        throw new Error("pobieranie plików nie powiodło się");
+      }
+    }else if (!res.ok) {
+      throw new Error("pobieranie plików nie powiodło się");
+    }
+  },
+
+
+
+  async fetchFiles(dir: string): Promise<DirsI> {
+    const res = await fetch(localUrl + "/api/files", {
+      method: "post",
+      headers: {
+        "content-type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem('access_token')}`
+      },
+      body:JSON.stringify({dir})
+    });
+
+
+    if (res.status == 403){
+      const refres =  await this.fetchRefresh()
+      if (!refres.ok) {
+        throw new Error("pobieranie plików nie powiodło się");
+      }
+    }else if (!res.ok) {
+      throw new Error("pobieranie plików nie powiodło się");
+    }
+    const resdata = await res.json();
+
+
+    return resdata;
+  },
+
 
   async fetchLogin(data: LoginFormI): Promise<any> {
     const res = await fetch(localUrl + "/api/login", {
