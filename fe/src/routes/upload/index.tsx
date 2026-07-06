@@ -157,7 +157,10 @@ function UploadComponent() {
         const name= parts[1];
         return (
           <li key={index}>
-            {type=="FOLDER" ? <b onClick={()=>{setCurrentPath(currentPath+"/"+name); refetch()}}>{name}</b> : `${name}`}
+            {type=="FOLDER" ?
+                  <b onClick={()=>{setCurrentPath(currentPath+"/"+name);refetch()}}>{name}</b> :
+                  <a href={"http://localhost:8080/uploads"+currentPath+"/"+name +"?token=" +localStorage.getItem("access_token")}>{name}</a>
+            }
             <button disabled={isDeleting} onClick={()=>{
               if (confirm(`Czy na pewno chcesz usunąć ${name}?`)) {
                     deleteFile(currentPath+"/"+name);

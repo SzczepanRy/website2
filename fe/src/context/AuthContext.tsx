@@ -1,10 +1,11 @@
-import React, { createContext,  useState, useEffect } from 'react'
+
+import React, { createContext, useState, useEffect } from 'react'
 import net from '../net/net'
 import { useMutation } from '@tanstack/react-query'
 
 interface AuthContextType {
   isAuthenticated: boolean
-  access: string| null
+  access: string | null
   isLoading: boolean
   login: (access: string) => void
   logout: () => void
@@ -16,6 +17,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [access, setAccess] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
+  const login = (access: string) => {
+    setAccess(access)
+    localStorage.setItem('access_token', access)
+  }
+
+  const logout = () => {
+    setAccess(null)
+    localStorage.removeItem('access_token')
+
+    // wyślij tu zapytanie net.logout(), aby serwer usunął ciasteczko refresh tokenu.
+  }
 
   const refreshMt = useMutation({
     mutationFn: () => net.fetchRefresh(),
@@ -33,27 +45,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   });
 
   useEffect(() => {
-    const accessLocal= localStorage.getItem('access_token')
+    const accessLocal = localStorage.getItem('access_token')
     if (accessLocal) {
       setAccess(accessLocal)
       setIsLoading(false)
-    }else {
+    } else {
       refreshMt.mutate()
     }
-
   }, [])
 
-  const login = (access: string) => {
-    setAccess(access)
-    localStorage.setItem('access_token', access)
-  }
-
-  const logout = () => {
-    setAccess(null)
-    localStorage.removeItem('access_token')
-  }
-
-  const isAuthenticated = !!access// true jeśli istnieje, false jeśli null
+  const isAuthenticated = !!access
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, access, isLoading, login, logout }}>
@@ -62,5 +63,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   )
 }
 
-// 4. Eksportujemy sam wewnętrzny kontekst na wypadek specyficznych potrzeb
 export { AuthContext }
+
+

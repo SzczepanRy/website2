@@ -3,9 +3,12 @@ package router
 import (
 	"log"
 	"net/http"
+	"path/filepath"
 	"regexp"
 	"server/internal/api/handlers"
 	"server/internal/api/middleware"
+	"server/internal/services"
+	"strings"
 )
 
 type Router struct {
@@ -38,7 +41,6 @@ func (mux *Router) setupRoutes() {
 
 func (mux *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
-
 	if match, _ := regexp.MatchString("/api/.*", r.URL.Path); match {
 		//api niem wim czy trzeba post jakoś inferować
 
@@ -57,7 +59,30 @@ func (mux *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		// NONAPI
 		switch r.Method {
 		case "GET":
-			if match, _ := regexp.MatchString("/assets/.*", r.URL.Path); match {
+			if match, _ := regexp.MatchString("/uploads/.*", r.URL.Path); match {
+				accessToken := r.URL.Query().Get("token")
+				_, err := services.VerifyToken(accessToken)
+				if err != nil {
+					handlers.Error(w, r, "Invalid access token", http.StatusForbidden)
+					return
+				}
+
+				baseDir := "./uploads"
+
+				// Usuwamy duplikujący się segment z adresu URL
+				trimmedPath := strings.TrimPrefix(r.URL.Path, "/uploads")
+
+				cleanedPath := filepath.Clean(trimmedPath)
+				finalFilePath := filepath.Join(baseDir, cleanedPath)
+				cleanBaseDir := filepath.Clean(baseDir)
+
+				if !strings.HasPrefix(finalFilePath, cleanBaseDir) {
+					handlers.Error(w, r, "fuck you!", http.StatusBadRequest)
+					return
+				}
+
+				http.ServeFile(w, r, finalFilePath)
+			} else if match, _ := regexp.MatchString("/assets/.*", r.URL.Path); match {
 				http.ServeFile(w, r, "./fe/dist/"+r.URL.Path)
 			} else {
 				switch r.URL.Path {
