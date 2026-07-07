@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 //import { useAuth } from '../hooks/useAuth'
 import { useRef } from 'react'
 import { useMutation } from '@tanstack/react-query'
@@ -12,7 +12,15 @@ export const Route = createFileRoute('/register')({
 
 function RegisterComponent() {
 
-  const registerMt= useMutation({ mutationFn: (data: RegisterFormI) => net.fetchRegister(data) });
+  const registerMt= useMutation({ mutationFn: (data: RegisterFormI) => net.fetchRegister(data) ,
+    onSuccess: (resdata) => {
+      if (resdata ) {
+        navigate({ to: '/login' })
+      }
+    },
+  });
+
+  const navigate = useNavigate()
 
   const loginRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
