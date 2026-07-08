@@ -189,7 +189,7 @@ function UploadComponent() {
                   <span className="upload-file-name">
                     {type=="FOLDER" ?
                           <b className="upload-folder-name" onClick={()=>{setCurrentPath(currentPath+"/"+name);refetch()}}>{name}</b> :
-                          <a className="upload-file-link" href={"http://localhost:8080/uploads"+currentPath+"/"+name +"?token=" +localStorage.getItem("access_token")}>{name}</a>
+                          <a className="upload-file-link" href={window.location.origin+ "/uploads"+currentPath+"/"+name +"?token=" +localStorage.getItem("access_token")}>{name}</a>
                     }
                   </span>
                   <span className="upload-file-actions">
