@@ -7,8 +7,10 @@ import (
 	"server/internal/api/database"
 	"server/internal/api/handlers"
 	"server/internal/api/middleware"
+	"time"
 
 	"github.com/joho/godotenv"
+	"golang.org/x/time/rate"
 )
 
 func main() {
@@ -27,10 +29,13 @@ func main() {
 	mux := router.NewRouter(handlerCtx)
 	CORSmux := middleware.CORSMiddleware(mux)
 
+	limiter := middleware.NewIPRateLimiter(rate.Every(time.Second/5), 10)
+	finalHandler := middleware.Limit(limiter, CORSmux)
+
 	log.Printf("server port 8080")
 
 	// Złap błąd, jeśli port jest zajęty
-	err = http.ListenAndServe(":8080", CORSmux)
+	err = http.ListenAndServe(":8080", finalHandler)
 	if err != nil {
 		log.Fatal("Serwer nie mógł wystartować: ", err)
 	}
