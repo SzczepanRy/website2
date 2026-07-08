@@ -1,0 +1,323 @@
+@use 'vars' as *;
+
+// page shell — matches .dashboard-page
+.upload-page {
+  flex: 1;
+  padding: 64px 48px;
+
+  @media (max-width: 640px) {
+    padding: 40px 24px;
+  }
+}
+
+.upload-header {
+  margin-bottom: 20px;
+}
+
+// matches .dashboard-title
+.upload-title {
+  font-size: clamp(2rem, 5vw, 4.5rem);
+  color: $text-hi;
+  margin-bottom: 20px;
+}
+
+.upload-subtitle {
+  @extend %label;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.upload-status {
+  @extend %label;
+  padding: 48px 0;
+  text-align: center;
+}
+
+.upload-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+// panel shell — matches .auth-box
+.upload-panel {
+  border: 1px solid $border;
+  display: flex;
+  flex-direction: column;
+}
+
+.upload-panel-header {
+  padding: 28px 28px 24px;
+  border-bottom: 1px solid $border;
+}
+
+.upload-panel-label {
+  @extend %label;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.upload-panel-title {
+  font-size: 1.25rem;
+  color: $text-hi;
+}
+
+.upload-panel-body {
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+// field — matches .auth-field
+.upload-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &-label {
+    @extend %label;
+  }
+
+  input:not(.upload-file-input) {
+    @extend %reset-input;
+    background: $bg-2;
+    border: 1px solid $border;
+    color: $text-hi;
+    padding: 10px 12px;
+    font-size: 14px;
+    transition: border-color 0.1s;
+
+    &:focus {
+      border-color: $border-hi;
+      outline: none;
+    }
+
+    &::placeholder {
+      color: $text;
+    }
+  }
+}
+
+.upload-file-input {
+  @extend %reset-input;
+  background: $bg-2;
+  border: 1px solid $border;
+  color: $text;
+  padding: 10px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.1s, color 0.1s;
+
+  &::file-selector-button {
+    all: unset;
+    display: inline-block;
+    margin-right: 16px;
+    padding: 8px 14px;
+    border: 1px solid $border-hi;
+    color: $text-hi;
+    font-family: $sans;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+
+    &:hover {
+      background: $text-hi;
+      color: $bg;
+    }
+  }
+
+  &:hover,
+  &:focus {
+    border-color: $border-hi;
+    color: $text-hi;
+    outline: none;
+  }
+}
+
+// primary action — matches .auth-submit
+.upload-btn {
+  all: unset;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  padding: 12px;
+  border: 1px solid $border-hi;
+  color: $text-hi;
+  font-family: $sans;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s, border-color 0.1s, opacity 0.1s;
+
+  &:hover:not(:disabled) {
+    background: $text-hi;
+    color: $bg;
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  // secondary — matches .home-nav-link
+  &--ghost {
+    display: inline-flex;
+    width: auto;
+    padding: 12px 24px;
+    border-color: $border;
+    color: $text;
+
+    &:hover:not(:disabled) {
+      background: transparent;
+      border-color: $border-hi;
+      color: $text-hi;
+    }
+  }
+
+  &--danger {
+    display: inline-flex;
+    width: auto;
+    padding: 6px 12px;
+    border-color: $border;
+    color: $text;
+    min-width: 32px;
+
+    &:hover:not(:disabled) {
+      background: $text-hi;
+      color: $bg;
+      border-color: $text-hi;
+    }
+  }
+}
+
+.upload-error {
+  @extend %label;
+  color: $text-hi;
+  border: 1px solid $border;
+  padding: 10px 12px;
+}
+
+.upload-browser {
+  border: 1px solid $border;
+}
+
+.upload-browser-header {
+  padding: 28px 28px 24px;
+  border-bottom: 1px solid $border;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.upload-location {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  &-label {
+    @extend %label;
+  }
+
+  code {
+    @extend %label;
+    display: inline-block;
+    font-family: $mono;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    color: $text-hi;
+    border: 1px solid $border;
+    padding: 6px 12px;
+    background: $bg-2;
+    word-break: break-all;
+    text-transform: none;
+  }
+}
+
+.upload-toolbar {
+  display: flex;
+  gap: 0;
+  flex-wrap: wrap;
+
+  .upload-btn + .upload-btn {
+    border-left: none;
+  }
+
+  @media (max-width: 640px) {
+    .upload-btn + .upload-btn {
+      border-left: 1px solid $border;
+      border-top: none;
+    }
+  }
+}
+
+.upload-file-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.upload-file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 28px;
+  border-bottom: 1px solid $border;
+  transition: background 0.1s, color 0.1s;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: $bg-2;
+  }
+}
+
+.upload-file-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.upload-folder-name {
+  color: $text-hi;
+  font-weight: 700;
+  cursor: pointer;
+  transition: color 0.1s;
+
+  &:hover {
+    color: $text;
+  }
+}
+
+// matches .auth-footer a
+.upload-file-link {
+  color: $text-hi;
+  border-bottom: 1px solid $border;
+  padding-bottom: 1px;
+  font-size: 14px;
+  transition: border-color 0.1s;
+
+  &:hover {
+    border-color: $border-hi;
+    text-decoration: none;
+  }
+}
+
+.upload-file-actions {
+  flex-shrink: 0;
+}
