@@ -1,0 +1,196 @@
+@use 'vars' as *;
+
+.about-page {
+  flex: 1;
+  padding: 64px 48px;
+
+  @media (max-width: 640px) {
+    padding: 40px 24px;
+  }
+}
+
+.about-header {
+  margin-bottom: 24px;
+}
+
+.about-subtitle {
+  @extend %label;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.about-title {
+  font-size: clamp(2rem, 5vw, 4.5rem);
+  color: $text-hi;
+  margin-bottom: 8px;
+}
+
+.about-role {
+  @extend %label;
+  color: $text-hi;
+  letter-spacing: 0.1em;
+}
+
+.about-contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  margin-bottom: 40px;
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+  }
+}
+
+.about-contact-link {
+  @extend %label;
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 20px;
+  border: 1px solid $border;
+  color: $text;
+  transition: color 0.1s, border-color 0.1s, background 0.1s;
+
+  & + & {
+    border-left: none;
+  }
+
+  &:hover {
+    color: $text-hi;
+    border-color: $border-hi;
+    text-decoration: none;
+  }
+
+  @media (max-width: 640px) {
+    & + & {
+      border-left: 1px solid $border;
+      border-top: none;
+    }
+  }
+}
+
+.about-divider {
+  border: none;
+  border-top: 1px solid $border;
+  margin-bottom: 40px;
+}
+
+.about-section {
+  margin-bottom: 48px;
+  max-width: 720px;
+}
+
+.about-section-label {
+  @extend %label;
+  display: block;
+  margin-bottom: 16px;
+}
+
+.about-text {
+  font-size: 0.9rem;
+  color: $text;
+  line-height: 1.8;
+}
+
+.about-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  margin-top: 24px;
+}
+
+.about-skill {
+  @extend %label;
+  display: inline-block;
+  padding: 8px 14px;
+  border: 1px solid $border;
+  background: $bg-2;
+  color: $text-hi;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  margin-bottom: 48px;
+}
+
+.about-panel {
+  border: 1px solid $border;
+  display: flex;
+  flex-direction: column;
+}
+
+.about-panel-header {
+  padding: 24px 28px 20px;
+  border-bottom: 1px solid $border;
+}
+
+.about-panel-label {
+  @extend %label;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.about-panel-title {
+  font-size: 1.1rem;
+  color: $text-hi;
+  margin-bottom: 4px;
+}
+
+.about-panel-meta {
+  @extend %label;
+  color: $text;
+  letter-spacing: 0.08em;
+}
+
+.about-panel-body {
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.about-panel-item {
+  font-size: 0.85rem;
+  color: $text;
+  line-height: 1.7;
+  padding-left: 14px;
+  border-left: 1px solid $border;
+
+  strong {
+    color: $text-hi;
+    font-weight: 700;
+  }
+}
+
+.about-education {
+  border: 1px solid $border;
+}
+
+.about-education-item {
+  padding: 24px 28px;
+  border-bottom: 1px solid $border;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.about-education-school {
+  font-size: 1rem;
+  color: $text-hi;
+  margin-bottom: 6px;
+}
+
+.about-education-detail {
+  font-size: 0.85rem;
+  color: $text;
+  line-height: 1.6;
+}
+
+.about-education-period {
+  @extend %label;
+  display: block;
+  margin-top: 8px;
+}

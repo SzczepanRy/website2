@@ -14,6 +14,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UploadIndexRouteImport } from './routes/upload/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as AboutIndexRouteImport } from './routes/about/index'
 
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
@@ -40,11 +41,17 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/dashboard/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AboutIndexRoute = AboutIndexRouteImport.update({
+  id: '/about/',
+  path: '/about/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/about/': typeof AboutIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/upload/': typeof UploadIndexRoute
 }
@@ -52,6 +59,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/about': typeof AboutIndexRoute
   '/dashboard': typeof DashboardIndexRoute
   '/upload': typeof UploadIndexRoute
 }
@@ -60,21 +68,36 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/about/': typeof AboutIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/upload/': typeof UploadIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/register' | '/dashboard/' | '/upload/'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/register'
+    | '/about/'
+    | '/dashboard/'
+    | '/upload/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/register' | '/dashboard' | '/upload'
-  id: '__root__' | '/' | '/login' | '/register' | '/dashboard/' | '/upload/'
+  to: '/' | '/login' | '/register' | '/about' | '/dashboard' | '/upload'
+  id:
+    | '__root__'
+    | '/'
+    | '/login'
+    | '/register'
+    | '/about/'
+    | '/dashboard/'
+    | '/upload/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
+  AboutIndexRoute: typeof AboutIndexRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
   UploadIndexRoute: typeof UploadIndexRoute
 }
@@ -116,6 +139,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/about/': {
+      id: '/about/'
+      path: '/about'
+      fullPath: '/about/'
+      preLoaderRoute: typeof AboutIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -123,6 +153,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
+  AboutIndexRoute: AboutIndexRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   UploadIndexRoute: UploadIndexRoute,
 }

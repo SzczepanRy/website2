@@ -23,6 +23,7 @@ function RootComponent() {
     <div className="root-layout">
       <nav className="root-nav">
         <Link to="/">Główna</Link>
+        <Link to="/about">About</Link>
         <Link to="/dashboard">Panel (Zabezpieczony)</Link>
         <Link to="/upload">Upload (Zabezpieczony)</Link>
 
